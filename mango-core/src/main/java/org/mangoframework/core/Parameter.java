@@ -3,6 +3,7 @@ package org.mangoframework.core;
 import org.apache.commons.fileupload.FileItem;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +30,8 @@ public class Parameter {
     private Map<String,List<FileItem>> paramFile = new HashMap<>();
 
     private HttpServletRequest request;
+
+    private HttpServletResponse response;
 
 
     public Map<String, String> getParamString() {
@@ -95,5 +98,13 @@ public class Parameter {
 
     public void setContextPath(String contextPath) {
         this.contextPath = contextPath;
+    }
+
+    public HttpServletResponse getResponse() {
+        return response;
+    }
+
+    public void setResponse(HttpServletResponse response) {
+        this.response = response;
     }
 }

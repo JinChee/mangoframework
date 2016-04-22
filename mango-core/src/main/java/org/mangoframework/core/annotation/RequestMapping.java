@@ -1,5 +1,6 @@
 package org.mangoframework.core.annotation;
 
+
 /**
  * @author zhoujingjie
  * @date 2016/4/22
@@ -16,4 +17,5 @@ public @interface RequestMapping {
 
     boolean delete() default false;
 
+    boolean singleton() default false;
 }

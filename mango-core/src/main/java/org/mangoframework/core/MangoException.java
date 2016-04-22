@@ -1,4 +1,4 @@
-package org.mangoframework.core.exception;
+package org.mangoframework.core;
 
 /**
  * @author zhoujingjie

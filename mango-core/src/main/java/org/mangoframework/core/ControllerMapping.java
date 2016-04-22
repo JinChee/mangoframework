@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * controller 映射
  * @author zhoujingjie
  * @date 2016/4/22
  */
@@ -18,24 +19,50 @@ public class ControllerMapping {
 
     private ControllerMapping(){}
 
+    /**
+     * 初始化映射
+     * @param classNames 类名
+     * @return 映射类
+     */
     public static ControllerMapping init(String classNames){
         String[] names = classNames.split(",");
         for(String className:names){
-            scannerControllerAndMethods(className);
+            scannerControllerPaths(className);
         }
         return new ControllerMapping();
     }
 
-    private static void scannerControllerAndMethods(String className) throws IllegalAccessException, InstantiationException, ClassNotFoundException {
-        Object pathBean = Class.forName(className).newInstance();
-        for(Field field:pathBean.getClass().getFields()){
-            PathInject pathInject = field.getAnnotation(PathInject.class);
-            if(pathInject != null && pathInject.value().length()>0){
-                scannerURIAndMethods(pathInject.value(), (String) field.get(null));
+    public static Controller get(String path){
+        return mapping.get(path);
+    }
+
+    /**
+     * 扫描controller 和 方法
+     * @param className  controller类名
+     */
+    private static void scannerControllerPaths(String className){
+        try {
+            Object pathBean = Class.forName(className).newInstance();
+            for(Field field:pathBean.getClass().getFields()){
+                PathInject pathInject = field.getAnnotation(PathInject.class);
+                if(pathInject != null && pathInject.value().length()>0){
+                    try {
+                        scannerURIAndMethods(pathInject.value(), (String) field.get(null));
+                    } catch (IllegalAccessException e) {
+                        log.error(e);
+                    }
+                }
             }
+        } catch (InstantiationException |IllegalAccessException |ClassNotFoundException e) {
+            log.error(e);
         }
     }
 
+    /**
+     * 扫描方法与地址
+     * @param controllerClass  controller 类
+     * @param pathValue 字段值
+     */
     private static void scannerURIAndMethods(String controllerClass,String pathValue){
         try {
             Object controller = Class.forName(controllerClass).newInstance();
@@ -46,11 +73,16 @@ public class ControllerMapping {
                 if(pathValue.charAt(pathValue.length()-1) != '/') {
                     pathValue = pathValue+"/";
                 }
-                String uri = pathValue.concat(rm.value());
+                String value = rm.value();
+                if(value.charAt(0) == '/'){
+                      value = value.substring(1);
+                }
+                String uri = pathValue.concat(value);
                 mapping.put(uri,new Controller(controller,method,rm));
+                log.debug("scannerURIAndMethods uri:"+uri);
             }
         } catch (InstantiationException | ClassNotFoundException | IllegalAccessException e) {
-            e.printStackTrace();
+            log.error(e);
         }
     }
 

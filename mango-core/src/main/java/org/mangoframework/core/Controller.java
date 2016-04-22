@@ -10,7 +10,7 @@ import java.lang.reflect.Method;
  */
 public class Controller {
     private Object instance;
-    private java.lang.reflect.Method method;
+    private Method method;
     private RequestMapping requestMapping;
 
     public Controller(Object instance, Method method, RequestMapping requestMapping) {
