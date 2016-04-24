@@ -1,4 +1,4 @@
-package org.mangoframework.core;
+package org.mangoframework.core.dispatcher;
 
 import org.apache.commons.fileupload.FileItem;
 

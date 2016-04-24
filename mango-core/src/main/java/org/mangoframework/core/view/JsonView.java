@@ -1,9 +1,12 @@
 package org.mangoframework.core.view;
 
-import org.mangoframework.core.Parameter;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
+import org.mangoframework.core.dispatcher.Parameter;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 
 /**
@@ -11,11 +14,11 @@ import javax.servlet.http.HttpServletResponse;
  * @author : zhoujingjie
  * @Date: 16/4/22
  */
-public class JsonView implements ResultView {
+public class JsonView extends ResultView {
     @Override
-    public void doRepresent(Parameter parameter,Object data) {
+    public void doRepresent(Parameter parameter) throws IOException ,ServletException{
         HttpServletResponse response = parameter.getResponse();
-        HttpServletRequest request = parameter.getRequest();
         response.setContentType("application/json");
+        JSON.writeJSONStringTo(super.getData(),response.getWriter(), SerializerFeature.WriteDateUseDateFormat);
     }
 }

@@ -1,21 +1,24 @@
 package org.mangoframework.core.view;
 
-import org.mangoframework.core.Parameter;
+import org.mangoframework.core.dispatcher.Parameter;
 
-import java.util.Map;
+import javax.servlet.ServletException;
+import java.io.IOException;
 
 /**
  * @author: zhoujingjie
- * @Date: 16/4/22
+ * @Date: 16/4/24
  */
-public class RequestContextView implements ResultView {
+public class RequestContextView extends ResultView{
+    private Object data;
+    private String contextKey;
+    public RequestContextView(String contextKey,Object data){
+        this.data = data;
+        this.contextKey = contextKey;
+    }
+
     @Override
-    public void doRepresent(Parameter parameter, Object data) {
-        if (data instanceof Map) {
-            Map<String, Object> map = (Map<String, Object>) data;
-            for (Map.Entry<String, Object> entry : map.entrySet()) {
-                parameter.getRequest().setAttribute(entry.getKey(), entry.getValue());
-            }
-        }
+    public void doRepresent(Parameter parameter) throws IOException,ServletException {
+        parameter.getRequest().setAttribute(contextKey,data);
     }
 }

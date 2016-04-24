@@ -1,6 +1,6 @@
 package org.mangoframework.core.exception;
 
-import org.mangoframework.core.Parameter;
+import org.mangoframework.core.dispatcher.Parameter;
 
 /**
  * User: zhoujingjie

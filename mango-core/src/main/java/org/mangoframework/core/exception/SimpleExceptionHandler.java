@@ -1,6 +1,6 @@
-package org.mangoframework.core;
+package org.mangoframework.core.exception;
 
-import org.mangoframework.core.exception.ExceptionHandler;
+import org.mangoframework.core.dispatcher.Parameter;
 
 /**
  * User: zhoujingjie
@@ -8,6 +8,7 @@ import org.mangoframework.core.exception.ExceptionHandler;
  * Time: 22:01
  */
 public class SimpleExceptionHandler implements ExceptionHandler{
+
     @Override
     public void process(Parameter parameter,Exception e) {
         parameter.getResponse().setStatus(503);

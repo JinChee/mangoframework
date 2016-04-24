@@ -1,7 +1,5 @@
 package org.mangoframework.core.exception;
 
-import org.mangoframework.core.MangoException;
-
 /**
  * User: zhoujingjie
  * Date: 16/4/22
