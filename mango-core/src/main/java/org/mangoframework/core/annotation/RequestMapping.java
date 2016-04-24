@@ -14,7 +14,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 public @interface RequestMapping {
 
-    String value() default "";
+    String[] value() default {};
 
     boolean get() default true;
 

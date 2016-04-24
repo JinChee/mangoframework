@@ -83,15 +83,16 @@ public class ControllerMapping {
                 if (pathValue.charAt(pathValue.length() - 1) == '/') {
                     pathValue = pathValue.substring(1);
                 }
-                String value = rm.value();
+                String[] values = rm.value();
+                for (String value : values) {
+                    if (value.length() > 0 && value.charAt(0) != '/') {
+                        value = "/" + value;
+                    }
+                    String uri = pathValue.concat(value);
 
-                if (value.length() > 0 && value.charAt(0) != '/') {
-                    value = "/" + value;
+                    mapping.put(uri, new Controller(controller, method, rm));
+                    log.debug("scannerURIAndMethods uri:" + uri);
                 }
-                String uri = pathValue.concat(value);
-
-                mapping.put(uri, new Controller(controller, method, rm));
-                log.debug("scannerURIAndMethods uri:" + uri);
             }
         } catch (InstantiationException | ClassNotFoundException | IllegalAccessException e) {
             log.error(e);

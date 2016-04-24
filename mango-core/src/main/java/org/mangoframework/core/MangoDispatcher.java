@@ -49,6 +49,12 @@ public class MangoDispatcher extends HttpServlet {
             response.setHeader("Access-Control-Request-Method", "X-PINGOTHER");
             return;
         }
+        if("".equals(parameter.getPath())){
+            String defaultController = ConfigUtils.getDefaultController();
+            if(defaultController!=null){
+                parameter.setPath(defaultController);
+            }
+        }
         //sh.doDispatcher(parameter,response);
         try {
             ResultView view = sh.handleRequest(parameter);

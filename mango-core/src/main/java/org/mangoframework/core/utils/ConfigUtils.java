@@ -102,4 +102,8 @@ public class ConfigUtils {
             return null;
         }
     }
+
+    public static String getDefaultController() {
+        return properties.getProperty("mango.controller.default");
+    }
 }
