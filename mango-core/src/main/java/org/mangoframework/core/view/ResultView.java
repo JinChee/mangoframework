@@ -9,14 +9,12 @@ import java.io.IOException;
  * @author zhoujingjie
  * @date 2016/4/22
  */
-public class ResultView {
+public abstract class ResultView {
 
     private Object data;
     private String template;
 
-    public void doRepresent(Parameter parameter) throws IOException, ServletException {
-
-    }
+    public abstract void doRepresent(Parameter parameter) throws IOException, ServletException;
 
     public ResultView() {
     }

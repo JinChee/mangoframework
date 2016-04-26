@@ -11,11 +11,11 @@ import java.util.Map;
  * @author: zhoujingjie
  * @Date: 16/4/24
  */
-public class JspView extends ResultView {
+public class ForwardView extends ResultView {
     private String prefix;
     private String suffix;
 
-    public JspView(String prefix, String suffix) {
+    public ForwardView(String prefix, String suffix) {
         this.prefix = prefix;
         this.suffix = suffix;
     }
