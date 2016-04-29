@@ -81,7 +81,7 @@ public class ConfigUtils {
         }
         return viewsMap;
     }
-    private static ResultView getResultView(String viewClass){
+    public static ResultView getResultView(String viewClass){
         try {
             int sIndex = viewClass.indexOf("(");
             int eIndex = viewClass.indexOf(")");

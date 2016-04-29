@@ -103,7 +103,7 @@ public class SimpleHandlerAdapter implements HandlerAdapter {
     private ResultView getResultView(String extension) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
         ResultView view = resultViewMap.get(extension);
         if(view == null){
-            view = (ResultView) Class.forName(ConfigUtils.getDefaultResultView()).newInstance();
+            view = ConfigUtils.getResultView(ConfigUtils.getDefaultResultView());
         }
         return view;
     }
