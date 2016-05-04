@@ -29,11 +29,6 @@ public class ConfigUtils {
     public static void init(String file){
         properties = new Properties();
         try {
-            properties.setProperty("mango.exception.handler","org.mangoframework.core.exception.SimpleExceptionHandler");
-            properties.setProperty("mango.view.default","org.mangoframework.core.view.JsonView");
-            properties.setProperty("mango.safe.http","disabled");
-            properties.setProperty("mango.filesize.max",String.valueOf(maxFileSize));
-            properties.setProperty("mango.size.max",String.valueOf(maxSize));
             properties.setProperty("mango.view.json","org.mangoframework.core.view.JsonView");
             properties.load(Thread.currentThread().getContextClassLoader().getResourceAsStream(file));
         } catch (IOException e) {
@@ -46,7 +41,7 @@ public class ConfigUtils {
     }
 
     public static String getExceptionHandlerClass(){
-        String clazz = properties.getProperty("mango.exception.handler");
+        String clazz = properties.getProperty("mango.exception.handler","org.mangoframework.core.exception.SimpleExceptionHandler");
         if(StringUtils.isEmpty(clazz)){
             clazz = "";
         }
@@ -54,19 +49,19 @@ public class ConfigUtils {
     }
 
     public static String getDefaultResultView(){
-        return properties.getProperty("mango.view.default");
+        return properties.getProperty("mango.view.default","org.mangoframework.core.view.JsonView");
 
     }
     public static String getSafeHttp(){
-        return properties.getProperty("mango.safe.http");
+        return properties.getProperty("mango.safe.http","disabled");
     }
 
     public static long getMaxFileSize(){
-        return Long.parseLong(properties.getProperty("mango.filesize.max"));
+        return Long.parseLong(properties.getProperty("mango.filesize.max",String.valueOf(maxFileSize)));
     }
 
     public static long getMaxSize(){
-        return Long.parseLong(properties.getProperty("mango.size.max"));
+        return Long.parseLong(properties.getProperty("mango.size.max",String.valueOf(maxSize)));
     }
 
     public static Map<String,ResultView> getViewsMap(){
