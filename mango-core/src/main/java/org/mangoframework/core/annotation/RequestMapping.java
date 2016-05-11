@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
  * @date 2016/4/22
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
+@Target({ElementType.METHOD,ElementType.TYPE})
 public @interface RequestMapping {
 
     String[] value() default {};

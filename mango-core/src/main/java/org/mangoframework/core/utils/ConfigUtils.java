@@ -40,6 +40,10 @@ public class ConfigUtils {
         return properties.getProperty("mango.controller.class");
     }
 
+    public static String getControllerPackage(){
+        return properties.getProperty("mango.controller.package");
+    }
+
     public static String getExceptionHandlerClass(){
         String clazz = properties.getProperty("mango.exception.handler","org.mangoframework.core.exception.SimpleExceptionHandler");
         if(StringUtils.isEmpty(clazz)){

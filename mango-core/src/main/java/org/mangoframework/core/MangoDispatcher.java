@@ -35,7 +35,6 @@ public class MangoDispatcher extends HttpServlet {
 
         ControllerMapping.init(ConfigUtils.getControllerClassNames());
 
-
         sh = ServiceHandler.initialize();
     }
 
