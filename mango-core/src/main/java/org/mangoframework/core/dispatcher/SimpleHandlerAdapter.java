@@ -64,7 +64,7 @@ public class SimpleHandlerAdapter implements HandlerAdapter {
             try {
                 Object data = null;
                 if(argTypes.length == 0){
-                    data = requestMethod.invoke(instance,null);
+                    data = requestMethod.invoke(instance);
                 }else{
                     Object[] args = new Object[argTypes.length];
                     for (int i = 0; i < argTypes.length; i++) {
@@ -83,8 +83,10 @@ public class SimpleHandlerAdapter implements HandlerAdapter {
                 view.setData(data);
                 view.setTemplate(rm.template());
                 return view;
-            } catch (IllegalAccessException | InvocationTargetException |ClassNotFoundException | InstantiationException e) {
+            } catch (IllegalAccessException |ClassNotFoundException | InstantiationException e) {
                 throw new MangoException("IllegalAccessException or InvocationTargetException ",e);
+            }catch (InvocationTargetException e){
+                throw new MangoException("IllegalAccessException or InvocationTargetException ",e.getTargetException());
             }
         }else{
             throw new UnsupportedMethodException(String.format("%s not support %s",path,method));

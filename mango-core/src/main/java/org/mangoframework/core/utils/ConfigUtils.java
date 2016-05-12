@@ -21,15 +21,19 @@ public class ConfigUtils {
 
     private static Properties properties;
 
-    //单文件最大值 2M
-    private static long maxFileSize = 2 << 20;
-    //文件上传最大值 20M
-    private static long maxSize =(2 << 20)*10;
 
-    public static void init(String file){
+    static {
         properties = new Properties();
         try {
-            properties.setProperty("mango.view.json","org.mangoframework.core.view.JsonView");
+            properties.load(Thread.currentThread().getContextClassLoader().getResourceAsStream("mango.default.properties"));
+            //properties.setProperty("mango.view.json","org.mangoframework.core.view.JsonView");
+        } catch (IOException e) {
+            log.error(e);
+        }
+    }
+
+    public static void init(String file){
+        try {
             properties.load(Thread.currentThread().getContextClassLoader().getResourceAsStream(file));
         } catch (IOException e) {
             log.error(e);
@@ -45,7 +49,7 @@ public class ConfigUtils {
     }
 
     public static String getExceptionHandlerClass(){
-        String clazz = properties.getProperty("mango.exception.handler","org.mangoframework.core.exception.SimpleExceptionHandler");
+        String clazz = properties.getProperty("mango.exception.handler");
         if(StringUtils.isEmpty(clazz)){
             clazz = "";
         }
@@ -53,19 +57,19 @@ public class ConfigUtils {
     }
 
     public static String getDefaultResultView(){
-        return properties.getProperty("mango.view.default","org.mangoframework.core.view.JsonView");
+        return properties.getProperty("mango.view.default");
 
     }
     public static String getSafeHttp(){
-        return properties.getProperty("mango.safe.http","disabled");
+        return properties.getProperty("mango.safe.http");
     }
 
     public static long getMaxFileSize(){
-        return Long.parseLong(properties.getProperty("mango.filesize.max",String.valueOf(maxFileSize)));
+        return Long.parseLong(properties.getProperty("mango.filesize.max"));
     }
 
     public static long getMaxSize(){
-        return Long.parseLong(properties.getProperty("mango.size.max",String.valueOf(maxSize)));
+        return Long.parseLong(properties.getProperty("mango.size.max"));
     }
 
     public static Map<String,ResultView> getViewsMap(){
@@ -86,14 +90,18 @@ public class ConfigUtils {
             int eIndex = viewClass.indexOf(")");
             if (sIndex != -1 && eIndex != -1) {
                 String arg = viewClass.substring(sIndex + 1, eIndex);
-                String[] args = arg.split(",");
-                viewClass = viewClass.substring(0, sIndex);
-                Class<?>[] classes = new Class[args.length];
-                for (int i = 0; i < classes.length; i++) {
-                    classes[i] = String.class;
+                if(!"".equals(arg.trim())) {
+                    String[] args = arg.split(",");
+                    viewClass = viewClass.substring(0, sIndex);
+                    Class<?>[] classes = new Class[args.length];
+                    for (int i = 0; i < classes.length; i++) {
+                        classes[i] = String.class;
+                    }
+                    Constructor<?> constructor = Class.forName(viewClass).getConstructor(classes);
+                    return (ResultView) constructor.newInstance(args);
+                }else{
+                    viewClass = viewClass.replace("(","").replace(")","");
                 }
-                Constructor<?> constructor = Class.forName(viewClass).getConstructor(classes);
-                return (ResultView)constructor.newInstance(args);
             }
             return (ResultView) Class.forName(viewClass).newInstance();
         } catch (NoSuchMethodException | InvocationTargetException | ClassNotFoundException |InstantiationException |IllegalAccessException e) {
@@ -104,5 +112,16 @@ public class ConfigUtils {
 
     public static String getDefaultController() {
         return properties.getProperty("mango.controller.default");
+    }
+
+    public static String getControllerPrefix(){
+        return properties.getProperty("mango.controller.prefix");
+    }
+    public static String getControllerPrefix(String name){
+        return properties.getProperty("mango.controller.prefix."+name);
+    }
+
+    public static String getDefaultExtension() {
+        return properties.getProperty("mango.controller.defaultextension");
     }
 }

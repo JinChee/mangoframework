@@ -137,6 +137,7 @@ public class ServiceHandler {
         if (requestUrl.endsWith("/")) {
             requestUrl = requestUrl.substring(0, requestUrl.length() - 1);
         }
+
         String contextPath = request.getServletContext().getContextPath();
         parameter.setRequestURL(requestUrl);
         int index = requestUrl.indexOf(contextPath);
@@ -147,11 +148,12 @@ public class ServiceHandler {
             parameter.setExtension(path.substring(temp + 1).toUpperCase());
             parameter.setPath(path.substring(0, temp));
         } else {
-            parameter.setExtension("");
+            parameter.setExtension(ConfigUtils.getDefaultExtension());
             parameter.setPath(path);
         }
         parameter.setRequest(request);
         parameter.setResponse(response);
+
         return parameter;
     }
 

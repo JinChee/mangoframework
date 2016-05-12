@@ -33,7 +33,6 @@ public class Parameter {
 
     private HttpServletResponse response;
 
-
     public Map<String, String> getParamString() {
         return paramString;
     }
@@ -107,4 +106,5 @@ public class Parameter {
     public void setResponse(HttpServletResponse response) {
         this.response = response;
     }
+
 }

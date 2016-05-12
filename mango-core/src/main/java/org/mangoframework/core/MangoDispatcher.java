@@ -22,7 +22,7 @@ public class MangoDispatcher extends HttpServlet {
 
     private static Logger log = Logger.getLogger(MangoDispatcher.class);
 
-    private static String DEFAULT_CONFIG = "mango.properties";
+    private static String MANGO_CONFIG = "mango.properties";
 
     private ServiceHandler sh;
 
@@ -31,9 +31,11 @@ public class MangoDispatcher extends HttpServlet {
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
 
-        ConfigUtils.init(DEFAULT_CONFIG);
+        ConfigUtils.init(MANGO_CONFIG);
 
         ControllerMapping.init(ConfigUtils.getControllerClassNames());
+
+        ControllerMapping.initPackages(ConfigUtils.getControllerPackage());
 
         sh = ServiceHandler.initialize();
     }
@@ -61,7 +63,7 @@ public class MangoDispatcher extends HttpServlet {
                 doRepresent(view, parameter);
             }else{
                 log.info("no result view to be returned "+parameter.getRequestURL());
-                super.service(request, response);
+                //super.service(request, response);
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
