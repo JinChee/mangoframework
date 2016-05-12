@@ -113,7 +113,7 @@ public class ServiceHandler {
                 for (Map.Entry<String, List<FileItem>> entry : map.entrySet()) {
                     if (entry.getValue() != null && entry.getValue().size() > 0) {
                         if (entry.getValue().get(0).isFormField()) {
-                            parameter.getParamString().put(entry.getKey(), StringUtils.join(entry.getValue()));
+                            parameter.getParamString().put(entry.getKey(), entry.getValue().get(0).getString());
                         } else {
                             parameter.getParamFile().put(entry.getKey(), entry.getValue());
                         }

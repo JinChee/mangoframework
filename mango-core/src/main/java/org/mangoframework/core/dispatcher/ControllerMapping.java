@@ -52,7 +52,37 @@ public class ControllerMapping {
 
 
     public static Controller get(String path) {
-        return mapping.get(path);
+        Controller controller =  mapping.get(path);
+        if(controller == null){
+            for(String key:mapping.keySet()){
+                if(key.contains("{") && key.contains("}")){
+                    String[] keys = key.split("/");
+                    String[] paths = path.split("/");
+                    if(keys.length != paths.length){
+                        continue;
+                    }
+                    boolean isMatching = true;
+                    Map<String,String> pathValueMap = new HashMap<>();
+                    for(int i=0;i<keys.length;i++){
+                        if(!keys[i].equals(paths[i])){
+                            if(keys[i].contains("{") && keys[i].contains("}")){
+                                String name = keys[i].substring(1,keys[i].length()-1);
+                                pathValueMap.put(name,paths[i]);
+                            }else{
+                                isMatching = false;
+                                break;
+                            }
+                        }
+                    }
+                    if(isMatching){
+                        controller = mapping.get(key);
+                        controller.setPathMap(pathValueMap);
+                        return controller;
+                    }
+                }
+            }
+        }
+        return controller;
     }
 
     /**
@@ -206,7 +236,7 @@ public class ControllerMapping {
                 String childFilePath = childFile.getPath();
                 if (childFilePath.endsWith(".class")) {
                     childFilePath = childFilePath.substring(childFilePath.indexOf("classes") + 8, childFilePath.lastIndexOf("."));
-                    childFilePath = childFilePath.replace("\\", ".");
+                    childFilePath = childFilePath.replace("/", ".");
                     myClassName.add(childFilePath);
                 }
             }

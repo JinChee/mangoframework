@@ -63,7 +63,7 @@ public class MangoDispatcher extends HttpServlet {
                 doRepresent(view, parameter);
             }else{
                 log.info("no result view to be returned "+parameter.getRequestURL());
-                //super.service(request, response);
+                super.service(request, response);
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);

@@ -1,5 +1,6 @@
 package org.mangoframework.core.dispatcher;
 
+import org.mangoframework.core.annotation.RequestParam;
 import org.mangoframework.core.exception.MangoException;
 import org.mangoframework.core.annotation.RequestMapping;
 import org.mangoframework.core.exception.ControllerNotFoundException;
@@ -8,6 +9,7 @@ import org.mangoframework.core.utils.ConfigUtils;
 import org.mangoframework.core.view.JsonView;
 import org.mangoframework.core.view.ResultView;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -61,6 +63,7 @@ public class SimpleHandlerAdapter implements HandlerAdapter {
             }
             Method requestMethod = controller.getMethod();
             Class<?>[] argTypes = requestMethod.getParameterTypes();
+            Annotation[][] paramAnns = requestMethod.getParameterAnnotations();
             try {
                 Object data = null;
                 if(argTypes.length == 0){
@@ -70,6 +73,14 @@ public class SimpleHandlerAdapter implements HandlerAdapter {
                     for (int i = 0; i < argTypes.length; i++) {
                         if(Parameter.class.isAssignableFrom(argTypes[i])){
                             args[i] = parameter;
+                        }else if(String.class.isAssignableFrom(argTypes[i]) && paramAnns[i]!=null && paramAnns[i].length>0){
+                            for(Annotation ann:paramAnns[i]){
+                                if(ann.annotationType().equals(RequestParam.class)){
+                                    RequestParam rp = (RequestParam) ann;
+                                    args[i] = controller.getPathMap().get(rp.value());
+                                    break;
+                                }
+                            }
                         }else{
                             args[i] = null;
                         }
