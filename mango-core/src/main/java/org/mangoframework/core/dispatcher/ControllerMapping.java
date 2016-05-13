@@ -227,6 +227,8 @@ public class ControllerMapping {
         List<String> myClassName = new ArrayList<String>();
         File file = new File(filePath);
         File[] childFiles = file.listFiles();
+        if(childFiles==null || childFiles.length==0)
+            return myClassName;
         for (File childFile : childFiles) {
             if (childFile.isDirectory()) {
                 if (childPackage) {
@@ -236,7 +238,7 @@ public class ControllerMapping {
                 String childFilePath = childFile.getPath();
                 if (childFilePath.endsWith(".class")) {
                     childFilePath = childFilePath.substring(childFilePath.indexOf("classes") + 8, childFilePath.lastIndexOf("."));
-                    childFilePath = childFilePath.replace("/", ".");
+                    childFilePath = childFilePath.replace(File.separator, ".");
                     myClassName.add(childFilePath);
                 }
             }
@@ -254,7 +256,7 @@ public class ControllerMapping {
     private static List<String> getClassNameByJar(String jarPath, boolean childPackage) {
         List<String> myClassName = new ArrayList<String>();
         String[] jarInfo = jarPath.split("!");
-        String jarFilePath = jarInfo[0].substring(jarInfo[0].indexOf("/"));
+        String jarFilePath = jarInfo[0].substring(jarInfo[0].indexOf(File.separator));
         String packagePath = jarInfo[1].substring(1);
         try {
             JarFile jarFile = new JarFile(jarFilePath);
@@ -265,11 +267,11 @@ public class ControllerMapping {
                 if (entryName.endsWith(".class")) {
                     if (childPackage) {
                         if (entryName.startsWith(packagePath)) {
-                            entryName = entryName.replace("/", ".").substring(0, entryName.lastIndexOf("."));
+                            entryName = entryName.replace(File.separator, ".").substring(0, entryName.lastIndexOf("."));
                             myClassName.add(entryName);
                         }
                     } else {
-                        int index = entryName.lastIndexOf("/");
+                        int index = entryName.lastIndexOf(File.separator);
                         String myPackagePath;
                         if (index != -1) {
                             myPackagePath = entryName.substring(0, index);
@@ -277,7 +279,7 @@ public class ControllerMapping {
                             myPackagePath = entryName;
                         }
                         if (myPackagePath.equals(packagePath)) {
-                            entryName = entryName.replace("/", ".").substring(0, entryName.lastIndexOf("."));
+                            entryName = entryName.replace(File.separator, ".").substring(0, entryName.lastIndexOf("."));
                             myClassName.add(entryName);
                         }
                     }

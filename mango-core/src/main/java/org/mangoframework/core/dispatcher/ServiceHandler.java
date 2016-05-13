@@ -113,7 +113,7 @@ public class ServiceHandler {
                 for (Map.Entry<String, List<FileItem>> entry : map.entrySet()) {
                     if (entry.getValue() != null && entry.getValue().size() > 0) {
                         if (entry.getValue().get(0).isFormField()) {
-                            parameter.getParamString().put(entry.getKey(), entry.getValue().get(0).getString());
+                            parameter.getParamString().put(entry.getKey(),join(entry.getValue()));
                         } else {
                             parameter.getParamFile().put(entry.getKey(), entry.getValue());
                         }
@@ -155,6 +155,22 @@ public class ServiceHandler {
         parameter.setResponse(response);
 
         return parameter;
+    }
+
+    private String join(List<FileItem> items){
+        StringBuilder sb = new StringBuilder();
+        if(items==null || items.size() == 0)
+            return null;
+        for(FileItem item:items){
+            try {
+                sb.append(item.getString(DEFAULT_CHARSET));
+                sb.append(",");
+            } catch (UnsupportedEncodingException e) {
+                log.error(e.getMessage(),e);
+            }
+        }
+        sb = sb.delete(sb.length()-1,sb.length());
+        return sb.toString();
     }
 
     /**
