@@ -10,14 +10,12 @@ import java.util.Map;
 /**
  * @author: zhoujingjie
  * @Date: 16/4/24
- * @see JspView
  */
-@Deprecated
-public class ForwardView extends ResultView {
+public class JspView extends ResultView {
     private String prefix;
     private String suffix;
 
-    public ForwardView(String prefix, String suffix) {
+    public JspView(String prefix, String suffix) {
         this.prefix = prefix;
         this.suffix = suffix;
     }
