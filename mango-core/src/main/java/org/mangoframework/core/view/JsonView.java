@@ -18,7 +18,8 @@ public class JsonView extends ResultView {
     @Override
     public void doRepresent(Parameter parameter) throws IOException ,ServletException{
         HttpServletResponse response = parameter.getResponse();
-        response.setContentType("application/json");
+        response.setContentType("application/json;charset=utf-8");
+        response.setCharacterEncoding("UTF-8");
         JSON.writeJSONStringTo(super.getData(),response.getWriter(), SerializerFeature.WriteDateUseDateFormat);
     }
 }
