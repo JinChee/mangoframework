@@ -1,7 +1,5 @@
 package org.mangoframework.core.dispatcher;
 
-import org.mangoframework.core.annotation.RequestMapping;
-
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
@@ -53,4 +51,5 @@ public class Controller {
     public void setPathMap(Map<String, String> pathMap) {
         this.pathMap = pathMap;
     }
+
 }

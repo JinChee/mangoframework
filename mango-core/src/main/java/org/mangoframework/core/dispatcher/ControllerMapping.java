@@ -1,7 +1,7 @@
 package org.mangoframework.core.dispatcher;
 
 import org.apache.log4j.Logger;
-import org.mangoframework.core.annotation.PathInject;
+import org.mangoframework.core.annotation.*;
 import org.mangoframework.core.annotation.RequestMapping;
 import org.mangoframework.core.utils.ConfigUtils;
 
@@ -23,7 +23,7 @@ import java.util.jar.JarFile;
 public class ControllerMapping {
 
     private static Logger log = Logger.getLogger(ControllerMapping.class);
-    private static Map<String, Controller> mapping = new HashMap<>();
+    private static Map<String, Map<String,Controller>> mapping = new HashMap<>();
 
     private ControllerMapping() {
     }
@@ -51,9 +51,9 @@ public class ControllerMapping {
     }
 
 
-    public static Controller get(String path) {
-        Controller controller =  mapping.get(path);
-        if(controller == null){
+    public static Controller get(String path,String method) {
+        Map<String,Controller> controllerMap = mapping.get(path);
+        if(controllerMap == null){
             for(String key:mapping.keySet()){
                 if(key.contains("{") && key.contains("}")){
                     String[] keys = key.split("/");
@@ -75,14 +75,19 @@ public class ControllerMapping {
                         }
                     }
                     if(isMatching){
-                        controller = mapping.get(key);
-                        controller.setPathMap(pathValueMap);
+                        controllerMap = mapping.get(key);
+                        Controller controller = controllerMap.get(method);
+                        if(controller!=null) {
+                            controller.setPathMap(pathValueMap);
+                        }
                         return controller;
                     }
                 }
             }
+            return null;
+        }else{
+            return controllerMap.get(method);
         }
-        return controller;
     }
 
     /**
@@ -138,12 +143,52 @@ public class ControllerMapping {
             }
             for (Method method : controller.getClass().getMethods()) {
                 rm = method.getAnnotation(RequestMapping.class);
-                if (rm == null)
-                    continue;
-                String[] values = rm.value();
+                String[] values = null;
+                RequestMethod[] methods = null;
+                org.mangoframework.core.dispatcher.RequestMapping requestMapping = new org.mangoframework.core.dispatcher.RequestMapping();
+                if (rm == null) {
+                    Get get = method.getAnnotation(Get.class);
+                    Post post = method.getAnnotation(Post.class);
+                    Delete delete = method.getAnnotation(Delete.class);
+                    Put put = method.getAnnotation(Put.class);
+
+                    if(get!=null){
+                        values = get.value();
+                        methods = new RequestMethod[]{RequestMethod.GET};
+                        requestMapping.setSingleton(get.singleton());
+                        requestMapping.setTemplate(get.template());
+                    }else if(post !=null){
+                        values = post.value();
+                        methods = new RequestMethod[]{RequestMethod.POST};
+                        requestMapping.setSingleton(post.singleton());
+                        requestMapping.setTemplate(post.template());
+                    }
+                    else if(put !=null){
+                        values = put.value();
+                        methods = new RequestMethod[]{RequestMethod.PUT};
+                        requestMapping.setSingleton(put.singleton());
+                        requestMapping.setTemplate(put.template());
+                    }
+                    else if(delete !=null){
+                        values = delete.value();
+                        methods = new RequestMethod[]{RequestMethod.DELETE};
+                        requestMapping.setSingleton(delete.singleton());
+                        requestMapping.setTemplate(delete.template());
+                    }
+
+                    if(values == null) {
+                        continue;
+                    }
+                }else {
+                    values = rm.value();
+                    methods = rm.method();
+                    requestMapping.setTemplate(rm.template());
+                    requestMapping.setSingleton(rm.singleton());
+                }
+
+
                 if(values.length == 0){
-                    mapping.put(pathValue, new Controller(controller, method, rm));
-                    log.debug("scannerURIAndMethods uri:" + pathValue);
+                    putController(pathValue, new Controller(controller, method, requestMapping),methods);
                 }else {
                     for (String value : values) {
                         if (value.length() > 0 && value.charAt(0) != '/') {
@@ -153,13 +198,41 @@ public class ControllerMapping {
                         if (uri.length() > 0 && uri.charAt(uri.length() - 1) == '/') {
                             uri = uri.substring(0, uri.length() - 1);
                         }
-                        mapping.put(uri, new Controller(controller, method, rm));
-                        log.debug("scannerURIAndMethods uri:" + uri);
+                        putController(uri, new Controller(controller, method, requestMapping),methods);
                     }
                 }
             }
         } catch (InstantiationException | ClassNotFoundException | IllegalAccessException e) {
             log.error(e);
+        }
+    }
+
+    private static void putController(String path,Controller controller,RequestMethod[] methods){
+        Map<String,Controller> controllerMap = mapping.get(path);
+        if(controllerMap == null){
+            controllerMap = new HashMap<>();
+            mapping.put(path,controllerMap);
+        }
+
+        if(methods.length==0){
+            controllerMap.put("GET",controller);
+            log.debug("scanned uri: "+path+" method:GET");
+        }else{
+            for(RequestMethod method:methods){
+                if(RequestMethod.GET == method){
+                    controllerMap.put("GET",controller);
+                    log.debug("scanned uri: "+path+" method:GET");
+                }else if(RequestMethod.POST == method){
+                    controllerMap.put("POST",controller);
+                    log.debug("scanned uri: "+path+" method:POST");
+                }else if(RequestMethod.PUT == method){
+                    controllerMap.put("PUT",controller);
+                    log.debug("scanned uri: "+path+" method:PUT");
+                }else if(RequestMethod.DELETE == method){
+                    controllerMap.put("DELETE",controller);
+                    log.debug("scanned uri: "+path+" method:DELETE");
+                }
+            }
         }
     }
 

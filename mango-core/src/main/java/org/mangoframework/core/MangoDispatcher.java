@@ -33,7 +33,7 @@ public class MangoDispatcher extends HttpServlet {
 
         ConfigUtils.init(MANGO_CONFIG);
 
-        ControllerMapping.init(ConfigUtils.getControllerClassNames());
+        //ControllerMapping.init(ConfigUtils.getControllerClassNames());
 
         ControllerMapping.initPackages(ConfigUtils.getControllerPackage());
 
