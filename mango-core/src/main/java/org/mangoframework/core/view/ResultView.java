@@ -16,6 +16,8 @@ public abstract class ResultView {
 
     public abstract void doRepresent(Parameter parameter) throws IOException, ServletException;
 
+    public void handleException(Parameter parameter,Exception exception) throws ServletException, IOException {}
+
     public ResultView() {
     }
 

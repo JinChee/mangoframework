@@ -2,13 +2,12 @@ package org.mangoframework.core.dispatcher;
 
 import org.mangoframework.core.annotation.RequestParam;
 import org.mangoframework.core.exception.MangoException;
-import org.mangoframework.core.utils.ConfigUtils;
+import org.mangoframework.core.utils.ResultviewUtils;
 import org.mangoframework.core.view.ResultView;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Map;
 
 
 /**
@@ -17,18 +16,10 @@ import java.util.Map;
  */
 public class SimpleHandlerAdapter implements HandlerAdapter {
 
-    private Map<String,ResultView> resultViewMap;
 
     public SimpleHandlerAdapter() {
-        initializeResultViews();
     }
 
-    /**
-     * 初始化result view
-     */
-    private void initializeResultViews() {
-        resultViewMap = ConfigUtils.getViewsMap();
-    }
 
 
     @Override
@@ -79,7 +70,7 @@ public class SimpleHandlerAdapter implements HandlerAdapter {
             if(data instanceof ResultView){
                 return (ResultView) data;
             }
-            ResultView view = getResultView(parameter.getExtension());
+            ResultView view = ResultviewUtils.getResultView(parameter.getExtension());
             view.setData(data);
             view.setTemplate(rm.getTemplate());
             return view;
@@ -92,19 +83,4 @@ public class SimpleHandlerAdapter implements HandlerAdapter {
     }
 
 
-    /**
-     * 获取resultView
-     * @param extension 请求类型
-     * @return ResultView
-     * @throws ClassNotFoundException
-     * @throws IllegalAccessException
-     * @throws InstantiationException
-     */
-    private ResultView getResultView(String extension) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
-        ResultView view = resultViewMap.get(extension);
-        if(view == null){
-            view = ConfigUtils.getResultView(ConfigUtils.getDefaultResultView());
-        }
-        return view;
-    }
 }

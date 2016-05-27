@@ -1,6 +1,7 @@
 package org.mangoframework.core.exception;
 
 import org.mangoframework.core.dispatcher.Parameter;
+import org.mangoframework.core.utils.ResultviewUtils;
 
 /**
  * User: zhoujingjie
@@ -11,7 +12,11 @@ public class SimpleExceptionHandler implements ExceptionHandler{
 
     @Override
     public void process(Parameter parameter,Exception e) {
-        parameter.getResponse().setStatus(503);
-        e.printStackTrace();
+        try {
+            ResultviewUtils.getResultView(parameter.getExtension()).handleException(parameter,e);
+        } catch (ClassNotFoundException |IllegalAccessException |InstantiationException e1 ) {
+            parameter.getResponse().setStatus(503);
+            e1.printStackTrace();
+        }
     }
 }
