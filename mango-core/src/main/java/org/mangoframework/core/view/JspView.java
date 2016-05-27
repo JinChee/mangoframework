@@ -1,9 +1,11 @@
 package org.mangoframework.core.view;
 
 import org.mangoframework.core.dispatcher.Parameter;
+import org.mangoframework.core.utils.ConfigUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Map;
 
@@ -44,6 +46,12 @@ public class JspView extends ResultView {
             }
         }
         parameter.getRequest().getRequestDispatcher(path).forward(parameter.getRequest(), parameter.getResponse());
+    }
 
+    @Override
+    public void handleException(Parameter parameter, Exception exception) throws ServletException, IOException {
+        HttpServletResponse response = parameter.getResponse();
+        response.setStatus(503);
+        parameter.getRequest().getRequestDispatcher(ConfigUtils.getErrorPage()).forward(parameter.getRequest(),response);
     }
 }

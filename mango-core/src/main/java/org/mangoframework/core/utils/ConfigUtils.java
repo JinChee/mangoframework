@@ -49,10 +49,7 @@ public class ConfigUtils {
     }
 
     public static String getExceptionHandlerClass(){
-        String clazz = properties.getProperty("mango.exception.handler");
-        if(StringUtils.isEmpty(clazz)){
-            clazz = "";
-        }
+        String clazz = properties.getProperty("mango.exception.handler","");
         return clazz;
     }
 
@@ -123,5 +120,9 @@ public class ConfigUtils {
 
     public static String getDefaultExtension() {
         return properties.getProperty("mango.controller.defaultextension");
+    }
+
+    public static String getErrorPage(){
+        return properties.getProperty("mango.errorpage","/WEB-INF/error.jsp");
     }
 }
