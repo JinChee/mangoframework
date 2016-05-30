@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * @author zhoujingjie
@@ -65,13 +66,15 @@ public class MangoDispatcher extends HttpServlet {
                 log.info("no result view to be returned "+parameter.getRequestURL());
                 super.service(request, response);
             }
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
+        }catch (InvocationTargetException e){
+            sh.handleException(parameter,e.getTargetException());
+        }
+        catch (Throwable e) {
             sh.handleException(parameter, e);
         }
     }
 
-    public void doRepresent(ResultView view, Parameter parameter) throws IOException, ServletException {
+    public void doRepresent(ResultView view, Parameter parameter) throws Exception{
         if ("enable".equals(ConfigUtils.getSafeHttp())) {
             parameter.getResponse().setHeader("X-Frame-Options", "SAMEORIGIN");
             //parameter.getResponse().setHeader("Content-Security-Policy", "");

@@ -18,7 +18,7 @@ public class RedirectView extends ResultView {
     }
 
     @Override
-    public void doRepresent(Parameter parameter) throws IOException, ServletException {
+    public void doRepresent(Parameter parameter) throws Exception {
         parameter.getResponse().sendRedirect(redirectURL);
     }
 }

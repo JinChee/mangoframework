@@ -23,7 +23,7 @@ public class SimpleHandlerAdapter implements HandlerAdapter {
 
 
     @Override
-    public ResultView handle(Parameter parameter) throws MangoException {
+    public ResultView handle(Parameter parameter) throws Throwable {
         Controller controller = ControllerMapping.get(parameter.getPath(),parameter.getMethod());
         if(controller == null){
             //throw new ControllerNotFoundException(String.format("%s not found ",path));
@@ -74,10 +74,8 @@ public class SimpleHandlerAdapter implements HandlerAdapter {
             view.setData(data);
             view.setTemplate(rm.getTemplate());
             return view;
-        } catch (IllegalAccessException |ClassNotFoundException | InstantiationException e) {
-            throw new MangoException("IllegalAccessException or InvocationTargetException ",e);
-        }catch (InvocationTargetException e){
-            throw new MangoException("IllegalAccessException or InvocationTargetException ",e.getTargetException());
+        } catch (InvocationTargetException e){
+            throw e.getTargetException();
         }
 
     }

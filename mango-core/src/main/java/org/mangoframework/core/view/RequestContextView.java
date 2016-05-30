@@ -18,7 +18,7 @@ public class RequestContextView extends ResultView{
     }
 
     @Override
-    public void doRepresent(Parameter parameter) throws IOException,ServletException {
+    public void doRepresent(Parameter parameter) throws Exception {
         parameter.getRequest().setAttribute(contextKey,data);
     }
 }

@@ -24,7 +24,7 @@ public class JspView extends ResultView {
 
 
     @Override
-    public void doRepresent(Parameter parameter) throws IOException, ServletException {
+    public void doRepresent(Parameter parameter) throws Exception {
         String template = getTemplate();
         if (template.length() == 0) {
             template = parameter.getPath();
@@ -49,9 +49,11 @@ public class JspView extends ResultView {
     }
 
     @Override
-    public void handleException(Parameter parameter, Exception exception) throws ServletException, IOException {
+    public void handleException(Parameter parameter, Throwable throwable) throws Exception {
         HttpServletResponse response = parameter.getResponse();
         response.setStatus(503);
+        parameter.getRequest().setAttribute("exception",throwable);
+        throwable.printStackTrace();
         parameter.getRequest().getRequestDispatcher(ConfigUtils.getErrorPage()).forward(parameter.getRequest(),response);
     }
 }

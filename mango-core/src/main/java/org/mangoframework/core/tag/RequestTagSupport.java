@@ -44,7 +44,7 @@ public class RequestTagSupport extends TagSupport {
             if(view !=null){
                 new RequestContextView(contextKey,view.getData()).doRepresent(parameter);
             }
-        } catch (Exception e) {
+        } catch (Throwable e) {
             log.error(e.getMessage(),e);
         }
         return super.doStartTag();

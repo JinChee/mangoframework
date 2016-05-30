@@ -16,7 +16,7 @@ import java.io.IOException;
  */
 public class JsonView extends ResultView {
     @Override
-    public void doRepresent(Parameter parameter) throws IOException ,ServletException{
+    public void doRepresent(Parameter parameter) throws Exception{
         HttpServletResponse response = parameter.getResponse();
         response.setContentType("application/json;charset=utf-8");
         response.setCharacterEncoding("UTF-8");

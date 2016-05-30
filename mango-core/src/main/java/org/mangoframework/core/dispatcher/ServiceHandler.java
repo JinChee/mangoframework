@@ -195,7 +195,7 @@ public class ServiceHandler {
      * @param parameter 参数
      * @return object
      */
-    public ResultView handleRequest(Parameter parameter) {
+    public ResultView handleRequest(Parameter parameter) throws Throwable{
         return ha.handle(parameter);
     }
 
@@ -205,7 +205,7 @@ public class ServiceHandler {
      * @param parameter parameter
      * @param e         异常
      */
-    public void handleException(Parameter parameter, Exception e) {
+    public void handleException(Parameter parameter, Throwable e) {
         exceptionHandler.process(parameter, e);
     }
 

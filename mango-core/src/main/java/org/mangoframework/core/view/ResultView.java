@@ -14,9 +14,9 @@ public abstract class ResultView {
     private Object data;
     private String template;
 
-    public abstract void doRepresent(Parameter parameter) throws IOException, ServletException;
+    public abstract void doRepresent(Parameter parameter) throws Exception;
 
-    public void handleException(Parameter parameter,Exception exception) throws ServletException, IOException {}
+    public void handleException(Parameter parameter,Throwable e) throws Exception {}
 
     public ResultView() {
     }

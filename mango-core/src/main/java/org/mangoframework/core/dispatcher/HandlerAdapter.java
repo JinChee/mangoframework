@@ -9,6 +9,6 @@ import org.mangoframework.core.view.ResultView;
  */
 public interface HandlerAdapter {
 
-    ResultView handle(Parameter parameter) throws MangoException;
+    ResultView handle(Parameter parameter) throws Throwable;
 
 }

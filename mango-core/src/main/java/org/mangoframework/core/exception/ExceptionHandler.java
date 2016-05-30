@@ -9,5 +9,5 @@ import org.mangoframework.core.dispatcher.Parameter;
  */
 public interface ExceptionHandler {
 
-    void process(Parameter parameter,Exception e);
+    void process(Parameter parameter,Throwable e);
 }
