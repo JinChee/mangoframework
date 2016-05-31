@@ -1,6 +1,5 @@
 package org.mangoframework.core.dispatcher;
 
-import org.mangoframework.core.exception.MangoException;
 import org.mangoframework.core.view.ResultView;
 
 /**
@@ -9,6 +8,6 @@ import org.mangoframework.core.view.ResultView;
  */
 public interface HandlerAdapter {
 
-    ResultView handle(Parameter parameter) throws Throwable;
+    ResultView handle(Parameter parameter) throws Exception;
 
 }

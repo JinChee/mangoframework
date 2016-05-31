@@ -23,7 +23,7 @@ public class SimpleHandlerAdapter implements HandlerAdapter {
 
 
     @Override
-    public ResultView handle(Parameter parameter) throws Throwable {
+    public ResultView handle(Parameter parameter) throws Exception {
         Controller controller = ControllerMapping.get(parameter.getPath(),parameter.getMethod());
         if(controller == null){
             //throw new ControllerNotFoundException(String.format("%s not found ",path));
@@ -44,40 +44,35 @@ public class SimpleHandlerAdapter implements HandlerAdapter {
         Method requestMethod = controller.getMethod();
         Class<?>[] argTypes = requestMethod.getParameterTypes();
         Annotation[][] paramAnns = requestMethod.getParameterAnnotations();
-        try {
-            Object data = null;
-            if(argTypes.length == 0){
-                data = requestMethod.invoke(instance);
-            }else{
-                Object[] args = new Object[argTypes.length];
-                for (int i = 0; i < argTypes.length; i++) {
-                    if(Parameter.class.isAssignableFrom(argTypes[i])){
-                        args[i] = parameter;
-                    }else if(String.class.isAssignableFrom(argTypes[i]) && paramAnns[i]!=null && paramAnns[i].length>0){
-                        for(Annotation ann:paramAnns[i]){
-                            if(ann.annotationType().equals(RequestParam.class)){
-                                RequestParam rp = (RequestParam) ann;
-                                args[i] = controller.getPathMap().get(rp.value());
-                                break;
-                            }
+        Object data = null;
+        if(argTypes.length == 0){
+            data = requestMethod.invoke(instance);
+        }else{
+            Object[] args = new Object[argTypes.length];
+            for (int i = 0; i < argTypes.length; i++) {
+                if(Parameter.class.isAssignableFrom(argTypes[i])){
+                    args[i] = parameter;
+                }else if(String.class.isAssignableFrom(argTypes[i]) && paramAnns[i]!=null && paramAnns[i].length>0){
+                    for(Annotation ann:paramAnns[i]){
+                        if(ann.annotationType().equals(RequestParam.class)){
+                            RequestParam rp = (RequestParam) ann;
+                            args[i] = controller.getPathMap().get(rp.value());
+                            break;
                         }
-                    }else{
-                        args[i] = null;
                     }
+                }else{
+                    args[i] = null;
                 }
-                data = requestMethod.invoke(instance,args);
             }
-            if(data instanceof ResultView){
-                return (ResultView) data;
-            }
-            ResultView view = ResultviewUtils.getResultView(parameter.getExtension());
-            view.setData(data);
-            view.setTemplate(rm.getTemplate());
-            return view;
-        } catch (InvocationTargetException e){
-            throw e.getTargetException();
+            data = requestMethod.invoke(instance,args);
         }
-
+        if(data instanceof ResultView){
+            return (ResultView) data;
+        }
+        ResultView view = ResultviewUtils.getResultView(parameter.getExtension());
+        view.setData(data);
+        view.setTemplate(rm.getTemplate());
+        return view;
     }
 
 

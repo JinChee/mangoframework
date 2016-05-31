@@ -99,7 +99,7 @@ public class ServiceHandler {
      * @throws java.io.UnsupportedEncodingException
      *
      */
-    public Parameter initializeParameter(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {
+    public Parameter initializeParameter(HttpServletRequest request, HttpServletResponse response) throws Exception {
         Parameter parameter = new Parameter();
         parameter.setMethod(request.getMethod().toUpperCase());
 
@@ -108,24 +108,20 @@ public class ServiceHandler {
             ServletFileUpload upload = new ServletFileUpload(factory);
             upload.setFileSizeMax(ConfigUtils.getMaxFileSize());
             upload.setSizeMax(ConfigUtils.getMaxSize());
-            try {
-                Map<String, List<FileItem>> map = upload.parseParameterMap(request);
-                for (Map.Entry<String, List<FileItem>> entry : map.entrySet()) {
-                    if (entry.getValue() != null && entry.getValue().size() > 0) {
-                        if (entry.getValue().get(0).isFormField()) {
-                            parameter.getParamString().put(entry.getKey(),join(entry.getValue()));
-                        } else {
-                            parameter.getParamFile().put(entry.getKey(), entry.getValue());
-                        }
+            Map<String, List<FileItem>> map = upload.parseParameterMap(request);
+            for (Map.Entry<String, List<FileItem>> entry : map.entrySet()) {
+                if (entry.getValue() != null && entry.getValue().size() > 0) {
+                    if (entry.getValue().get(0).isFormField()) {
+                        parameter.getParamString().put(entry.getKey(),join(entry.getValue()));
+                    } else {
+                        parameter.getParamFile().put(entry.getKey(), entry.getValue());
                     }
                 }
-                if (request.getParameterMap() != null) {
-                    for (Map.Entry<String, String[]> entry : request.getParameterMap().entrySet()) {
-                        parameter.getParamString().put(entry.getKey(), StringUtils.join(entry.getValue(), ","));
-                    }
+            }
+            if (request.getParameterMap() != null) {
+                for (Map.Entry<String, String[]> entry : request.getParameterMap().entrySet()) {
+                    parameter.getParamString().put(entry.getKey(), StringUtils.join(entry.getValue(), ","));
                 }
-            } catch (FileUploadException e) {
-                throw new MangoException(e.getCause());
             }
         } else {
             for (Map.Entry<String, String[]> entry : request.getParameterMap().entrySet()) {
@@ -195,7 +191,7 @@ public class ServiceHandler {
      * @param parameter 参数
      * @return object
      */
-    public ResultView handleRequest(Parameter parameter) throws Throwable{
+    public ResultView handleRequest(Parameter parameter) throws Exception{
         return ha.handle(parameter);
     }
 

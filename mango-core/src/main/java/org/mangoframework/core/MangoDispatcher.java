@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.UndeclaredThrowableException;
 
 /**
  * @author zhoujingjie
@@ -44,21 +45,21 @@ public class MangoDispatcher extends HttpServlet {
 
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        Parameter parameter = sh.initializeParameter(request, response);
-        if (parameter.getMethod().equals("OPTIONS")) {
-            response.setHeader("Access-Control-Allow-Origin", "*");
-            response.setHeader("Access-Control-Request-Method", "GET,POST,DELETE,PUT,OPTIONS");
-            response.setHeader("Access-Control-Request-Method", "X-PINGOTHER");
-            return;
-        }
-        if("".equals(parameter.getPath())){
-            String defaultController = ConfigUtils.getDefaultController();
-            if(defaultController!=null){
-                parameter.setPath(defaultController);
-            }
-        }
-        //sh.doDispatcher(parameter,response);
+        Parameter parameter = null;
         try {
+            parameter = sh.initializeParameter(request, response);
+            if (parameter.getMethod().equals("OPTIONS")) {
+                response.setHeader("Access-Control-Allow-Origin", "*");
+                response.setHeader("Access-Control-Request-Method", "GET,POST,DELETE,PUT,OPTIONS");
+                response.setHeader("Access-Control-Request-Method", "X-PINGOTHER");
+                return;
+            }
+            if("".equals(parameter.getPath())){
+                String defaultController = ConfigUtils.getDefaultController();
+                if(defaultController!=null){
+                    parameter.setPath(defaultController);
+                }
+            }
             ResultView view = sh.handleRequest(parameter);
             if (view != null) {
                 doRepresent(view, parameter);
@@ -66,11 +67,24 @@ public class MangoDispatcher extends HttpServlet {
                 log.info("no result view to be returned "+parameter.getRequestURL());
                 super.service(request, response);
             }
-        }catch (InvocationTargetException e){
-            sh.handleException(parameter,e.getTargetException());
+        }catch (Exception e) {
+            handleException(e,parameter);
         }
-        catch (Throwable e) {
-            sh.handleException(parameter, e);
+    }
+
+    protected void handleException(Throwable e,Parameter parameter){
+        if(e instanceof InvocationTargetException){
+            handleException(((InvocationTargetException) e).getTargetException(),parameter);
+        }else if(e instanceof UndeclaredThrowableException){
+            handleException(((UndeclaredThrowableException) e).getUndeclaredThrowable(),parameter);
+        }else if(e.getCause()!=null){
+            handleException(e.getCause(),parameter);
+        }else{
+            if(parameter!=null) {
+                sh.handleException(parameter, e);
+            }else {
+                throw new RuntimeException(e);
+            }
         }
     }
 
