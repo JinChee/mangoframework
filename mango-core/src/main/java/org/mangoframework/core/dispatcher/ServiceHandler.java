@@ -103,6 +103,29 @@ public class ServiceHandler {
         Parameter parameter = new Parameter();
         parameter.setMethod(request.getMethod().toUpperCase());
 
+
+
+        String requestUrl = request.getRequestURI();
+        if (requestUrl.endsWith("/")) {
+            requestUrl = requestUrl.substring(0, requestUrl.length() - 1);
+        }
+
+        String contextPath = request.getServletContext().getContextPath();
+        parameter.setRequestURL(requestUrl);
+        int index = requestUrl.indexOf(contextPath);
+        String path = requestUrl.substring(index + contextPath.length());
+        path = URLDecoder.decode(new String(path.getBytes("ISO-8859-1"), DEFAULT_CHARSET), DEFAULT_CHARSET);
+        if (path.contains(".")) {
+            int temp = path.lastIndexOf(".");
+            parameter.setExtension(path.substring(temp + 1).toUpperCase());
+            parameter.setPath(path.substring(0, temp));
+        } else {
+            parameter.setExtension(ConfigUtils.getDefaultExtension());
+            parameter.setPath(path);
+        }
+        parameter.setRequest(request);
+        parameter.setResponse(response);
+
         if (ServletFileUpload.isMultipartContent(request)) {
             FileItemFactory factory = new DiskFileItemFactory();
             ServletFileUpload upload = new ServletFileUpload(factory);
@@ -128,27 +151,6 @@ public class ServiceHandler {
                 parameter.getParamString().put(entry.getKey(), StringUtils.join(entry.getValue(), ","));
             }
         }
-
-        String requestUrl = request.getRequestURI();
-        if (requestUrl.endsWith("/")) {
-            requestUrl = requestUrl.substring(0, requestUrl.length() - 1);
-        }
-
-        String contextPath = request.getServletContext().getContextPath();
-        parameter.setRequestURL(requestUrl);
-        int index = requestUrl.indexOf(contextPath);
-        String path = requestUrl.substring(index + contextPath.length());
-        path = URLDecoder.decode(new String(path.getBytes("ISO-8859-1"), DEFAULT_CHARSET), DEFAULT_CHARSET);
-        if (path.contains(".")) {
-            int temp = path.lastIndexOf(".");
-            parameter.setExtension(path.substring(temp + 1).toUpperCase());
-            parameter.setPath(path.substring(0, temp));
-        } else {
-            parameter.setExtension(ConfigUtils.getDefaultExtension());
-            parameter.setPath(path);
-        }
-        parameter.setRequest(request);
-        parameter.setResponse(response);
 
         return parameter;
     }

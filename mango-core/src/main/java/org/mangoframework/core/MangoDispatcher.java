@@ -5,6 +5,7 @@ import org.mangoframework.core.dispatcher.ControllerMapping;
 import org.mangoframework.core.dispatcher.Parameter;
 import org.mangoframework.core.dispatcher.ServiceHandler;
 import org.mangoframework.core.utils.ConfigUtils;
+import org.mangoframework.core.utils.ResultviewUtils;
 import org.mangoframework.core.view.ResultView;
 
 import javax.servlet.ServletConfig;
@@ -80,11 +81,7 @@ public class MangoDispatcher extends HttpServlet {
         }else if(e.getCause()!=null){
             handleException(e.getCause(),parameter);
         }else{
-            if(parameter!=null) {
-                sh.handleException(parameter, e);
-            }else {
-                throw new RuntimeException(e);
-            }
+            sh.handleException(parameter, e);
         }
     }
 
