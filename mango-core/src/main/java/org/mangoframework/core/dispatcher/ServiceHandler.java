@@ -1,21 +1,5 @@
 package org.mangoframework.core.dispatcher;
 
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileItemFactory;
-import org.apache.commons.fileupload.FileUploadException;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
-import org.mangoframework.core.exception.ExceptionHandler;
-import org.mangoframework.core.exception.MangoException;
-import org.mangoframework.core.exception.UnauthorizedException;
-import org.mangoframework.core.utils.ConfigUtils;
-import org.mangoframework.core.utils.ResultviewUtils;
-import org.mangoframework.core.view.ResultView;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -23,6 +7,19 @@ import java.lang.reflect.Proxy;
 import java.net.URLDecoder;
 import java.util.List;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileItemFactory;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
+import org.mangoframework.core.exception.UnauthorizedException;
+import org.mangoframework.core.utils.ConfigUtils;
+import org.mangoframework.core.view.ResultView;
 
 /**
  * @author: zhoujingjie
@@ -34,19 +31,14 @@ public class ServiceHandler {
 
     private static String DEFAULT_CHARSET = "UTF-8";
 
-
     private HandlerAdapter ha;
-
-
-    private ExceptionHandler exceptionHandler;
 
     private static ServiceHandler instance;
     //
-    private Map<MangoFilter,String> filterMap;
+    private Map<MangoFilter, String> filterMap;
 
     private ServiceHandler() {
         ha = initializeHandlerAdapter();
-        exceptionHandler = initializeExceptionHandler();
         filterMap = ConfigUtils.getFilters();
     }
 
@@ -76,26 +68,6 @@ public class ServiceHandler {
         return instance;
     }
 
-
-    /**
-     * 初始化异常处理器
-     *
-     * @return ExceptionHandler
-     */
-    private ExceptionHandler initializeExceptionHandler() {
-        String clazz = ConfigUtils.getExceptionHandlerClass();
-        try {
-            Object meh = Class.forName(clazz).newInstance();
-            if (meh instanceof ExceptionHandler) {
-                return (ExceptionHandler) meh;
-            }
-        } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
-            log.error(e);
-        }
-        throw new ClassCastException(String.format("%s can not cast to ExceptionHandler", clazz));
-    }
-
-
     /**
      * 初始化参数
      *
@@ -107,8 +79,6 @@ public class ServiceHandler {
     public Parameter initializeParameter(HttpServletRequest request, HttpServletResponse response) throws Exception {
         Parameter parameter = new Parameter();
         parameter.setMethod(request.getMethod().toUpperCase());
-
-
 
         String requestUrl = request.getRequestURI();
         if (requestUrl.endsWith("/")) {
@@ -140,7 +110,7 @@ public class ServiceHandler {
             for (Map.Entry<String, List<FileItem>> entry : map.entrySet()) {
                 if (entry.getValue() != null && entry.getValue().size() > 0) {
                     if (entry.getValue().get(0).isFormField()) {
-                        parameter.getParamString().put(entry.getKey(),join(entry.getValue()));
+                        parameter.getParamString().put(entry.getKey(), join(entry.getValue()));
                     } else {
                         parameter.getParamFile().put(entry.getKey(), entry.getValue());
                     }
@@ -160,19 +130,19 @@ public class ServiceHandler {
         return parameter;
     }
 
-    private String join(List<FileItem> items){
+    private String join(List<FileItem> items) {
         StringBuilder sb = new StringBuilder();
-        if(items==null || items.size() == 0)
+        if (items == null || items.size() == 0)
             return null;
-        for(FileItem item:items){
+        for (FileItem item : items) {
             try {
                 sb.append(item.getString(DEFAULT_CHARSET));
                 sb.append(",");
             } catch (UnsupportedEncodingException e) {
-                log.error(e.getMessage(),e);
+                log.error(e.getMessage(), e);
             }
         }
-        sb = sb.delete(sb.length()-1,sb.length());
+        sb = sb.delete(sb.length() - 1, sb.length());
         return sb.toString();
     }
 
@@ -191,31 +161,19 @@ public class ServiceHandler {
         });
     }
 
-
     /**
      * 处理请求 返回结果
      *
      * @param parameter 参数
      * @return object
      */
-    public ResultView handleRequest(Parameter parameter) throws Exception{
-        for(MangoFilter mf : filterMap.keySet()) {
-            if(!mf.doFilter(parameter)){
+    public ResultView handleRequest(Parameter parameter) throws Exception {
+        for (MangoFilter mf : filterMap.keySet()) {
+            if (!mf.doFilter(parameter)) {
                 throw new UnauthorizedException();
             }
         }
         return ha.handle(parameter);
     }
-
-    /**
-     * 处理异常
-     *
-     * @param parameter parameter
-     * @param e         异常
-     */
-    public void handleException(Parameter parameter, Throwable e) {
-        exceptionHandler.process(parameter, e);
-    }
-
 
 }

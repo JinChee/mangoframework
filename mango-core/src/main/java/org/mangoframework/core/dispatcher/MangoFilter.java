@@ -5,5 +5,5 @@ package org.mangoframework.core.dispatcher;
  * @date 2016-06-07
  */
 public interface MangoFilter {
-    boolean doFilter(Parameter parameter);
+    boolean doFilter(Parameter parameter) throws Exception;
 }

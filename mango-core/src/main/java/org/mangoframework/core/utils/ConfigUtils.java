@@ -46,10 +46,6 @@ public class ConfigUtils {
         return properties.getProperty("mango.controller.package");
     }
 
-    public static String getExceptionHandlerClass(){
-        String clazz = properties.getProperty("mango.exception.handler","");
-        return clazz;
-    }
 
     public static String getDefaultResultView(){
         return properties.getProperty("mango.view.default");

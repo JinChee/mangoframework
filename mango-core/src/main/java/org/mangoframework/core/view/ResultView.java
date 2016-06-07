@@ -16,7 +16,9 @@ public abstract class ResultView {
 
     public abstract void doRepresent(Parameter parameter) throws Exception;
 
-    public void handleException(Parameter parameter,Throwable e) throws Exception {}
+    public void handleException(Parameter parameter,Throwable e) throws Exception {
+        e.printStackTrace();
+    }
 
     public ResultView() {
     }

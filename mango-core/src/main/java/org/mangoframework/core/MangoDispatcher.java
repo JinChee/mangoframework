@@ -69,11 +69,15 @@ public class MangoDispatcher extends HttpServlet {
                 super.service(request, response);
             }
         }catch (Exception e) {
-            handleException(e,parameter);
+            try {
+                handleException(e,parameter);
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
         }
     }
 
-    protected void handleException(Throwable e,Parameter parameter){
+    protected void handleException(Throwable e,Parameter parameter) throws Exception {
         if(e instanceof InvocationTargetException){
             handleException(((InvocationTargetException) e).getTargetException(),parameter);
         }else if(e instanceof UndeclaredThrowableException){
@@ -81,7 +85,7 @@ public class MangoDispatcher extends HttpServlet {
         }else if(e.getCause()!=null){
             handleException(e.getCause(),parameter);
         }else{
-            sh.handleException(parameter, e);
+            ResultviewUtils.getResultView(parameter.getExtension()).handleException(parameter,e);
         }
     }
 
