@@ -7,7 +7,7 @@
     <groupId>org.mangoframework</groupId>
     <artifactId>mango-mangoframework</artifactId>
     <packaging>pom</packaging>
-    <version>1.1</version>
+    <version>1.2</version>
     <modules>
         <module>mango-core</module>
     </modules>

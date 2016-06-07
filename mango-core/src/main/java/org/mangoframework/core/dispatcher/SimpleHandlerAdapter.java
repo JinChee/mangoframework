@@ -6,7 +6,6 @@ import org.mangoframework.core.utils.ResultviewUtils;
 import org.mangoframework.core.view.ResultView;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 

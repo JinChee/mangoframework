@@ -9,7 +9,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.mangoframework.core.exception.ExceptionHandler;
 import org.mangoframework.core.exception.MangoException;
+import org.mangoframework.core.exception.UnauthorizedException;
 import org.mangoframework.core.utils.ConfigUtils;
+import org.mangoframework.core.utils.ResultviewUtils;
 import org.mangoframework.core.view.ResultView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -39,10 +41,13 @@ public class ServiceHandler {
     private ExceptionHandler exceptionHandler;
 
     private static ServiceHandler instance;
+    //
+    private Map<MangoFilter,String> filterMap;
 
     private ServiceHandler() {
         ha = initializeHandlerAdapter();
         exceptionHandler = initializeExceptionHandler();
+        filterMap = ConfigUtils.getFilters();
     }
 
     /**
@@ -194,6 +199,11 @@ public class ServiceHandler {
      * @return object
      */
     public ResultView handleRequest(Parameter parameter) throws Exception{
+        for(MangoFilter mf : filterMap.keySet()) {
+            if(!mf.doFilter(parameter)){
+                throw new UnauthorizedException();
+            }
+        }
         return ha.handle(parameter);
     }
 

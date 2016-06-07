@@ -1,6 +1,8 @@
 package org.mangoframework.core.dispatcher;
 
 import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.mangoframework.core.utils.ConfigUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -25,7 +27,7 @@ public class Parameter {
     //
     private String contextPath;
     //字符串参数
-    private Map<String,String> paramString = new HashMap<>();
+    private Map<String,String> paramString = new HtmlMap();
     //文件参数
     private Map<String,List<FileItem>> paramFile = new HashMap<>();
 
@@ -106,5 +108,16 @@ public class Parameter {
     public void setResponse(HttpServletResponse response) {
         this.response = response;
     }
+
+    private class HtmlMap extends HashMap<String,String>{
+        @Override
+        public String put(String key, String value) {
+            if(value!=null && ConfigUtils.getRequestEscape()) {
+                value = StringEscapeUtils.escapeHtml4(value);
+            }
+            return super.put(key, value);
+        }
+    }
+
 
 }

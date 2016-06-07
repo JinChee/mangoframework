@@ -2,15 +2,13 @@ package org.mangoframework.core.utils;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.mangoframework.core.dispatcher.MangoFilter;
 import org.mangoframework.core.view.ResultView;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author zhoujingjie
@@ -124,5 +122,30 @@ public class ConfigUtils {
 
     public static String getErrorPage(){
         return properties.getProperty("mango.errorpage","/WEB-INF/error.jsp");
+    }
+
+    public static Map<MangoFilter,String> getFilters(){
+        Map<MangoFilter,String> viewsMap = new HashMap<>();
+        String prefix = "mango.filter.";
+        for(Map.Entry<Object,Object> entry:properties.entrySet()){
+            String key = (String)entry.getKey();
+            if(key.startsWith(prefix)){
+                String value =(String)entry.getValue();
+                String realKey  =key.substring(prefix.length());
+                try {
+                    Object instance = Class.forName(realKey).newInstance();
+                    if(instance instanceof MangoFilter) {
+                        viewsMap.put((MangoFilter) instance, value);
+                    }
+                } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+                    log.error(e.getMessage(),e);
+                }
+            }
+        }
+        return viewsMap;
+    }
+
+    public static boolean getRequestEscape(){
+        return Boolean.parseBoolean(properties.getProperty("mango.escape","true"));
     }
 }
