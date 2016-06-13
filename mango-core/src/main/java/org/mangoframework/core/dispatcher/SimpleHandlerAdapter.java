@@ -3,6 +3,7 @@ package org.mangoframework.core.dispatcher;
 import org.mangoframework.core.annotation.RequestParam;
 import org.mangoframework.core.exception.MangoException;
 import org.mangoframework.core.utils.ResultviewUtils;
+import org.mangoframework.core.view.HeadView;
 import org.mangoframework.core.view.ResultView;
 
 import java.lang.annotation.Annotation;
@@ -23,6 +24,9 @@ public class SimpleHandlerAdapter implements HandlerAdapter {
 
     @Override
     public ResultView handle(Parameter parameter) throws Exception {
+        if(parameter.getMethod().equals("HEAD")){
+            return new HeadView();
+        }
         Controller controller = ControllerMapping.get(parameter.getPath(),parameter.getMethod());
         if(controller == null){
             //throw new ControllerNotFoundException(String.format("%s not found ",path));
