@@ -69,6 +69,11 @@ public class SimpleHandlerAdapter implements HandlerAdapter {
             }
             data = requestMethod.invoke(instance,args);
         }
+        if(data == null){
+            if(requestMethod.getReturnType().getName().equals("void")){
+                return null;
+            }
+        }
         if(data instanceof ResultView){
             return (ResultView) data;
         }

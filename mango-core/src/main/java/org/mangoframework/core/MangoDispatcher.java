@@ -56,9 +56,10 @@ public class MangoDispatcher extends HttpServlet {
                 return;
             }
             if("".equals(parameter.getPath())){
-                String defaultController = ConfigUtils.getDefaultController();
-                if(defaultController!=null){
-                    parameter.setPath(defaultController);
+                String welcomeFile = ConfigUtils.getWelcomeFile();
+                if(welcomeFile!=null){
+                    request.getRequestDispatcher(welcomeFile).forward(request,response);
+                    return;
                 }
             }
             ResultView view = sh.handleRequest(parameter);
@@ -66,7 +67,7 @@ public class MangoDispatcher extends HttpServlet {
                 doRepresent(view, parameter);
             }else{
                 log.info("no result view to be returned "+parameter.getRequestURL());
-                super.service(request, response);
+              //  super.service(request, response);
             }
         }catch (Exception e) {
             try {

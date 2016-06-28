@@ -101,8 +101,8 @@ public class ConfigUtils {
         }
     }
 
-    public static String getDefaultController() {
-        return properties.getProperty("mango.controller.default");
+    public static String getWelcomeFile() {
+        return properties.getProperty("mango.welcome");
     }
 
     public static String getControllerPrefix(){
