@@ -55,17 +55,17 @@ public class MangoDispatcher extends HttpServlet {
                 response.setHeader("Access-Control-Request-Method", "X-PINGOTHER");
                 return;
             }
-            if("".equals(parameter.getPath())){
-                String welcomeFile = ConfigUtils.getWelcomeFile();
-                if(welcomeFile!=null){
-                    request.getRequestDispatcher(welcomeFile).forward(request,response);
-                    return;
-                }
-            }
             ResultView view = sh.handleRequest(parameter);
             if (view != null) {
                 doRepresent(view, parameter);
             }else{
+                if("".equals(parameter.getPath())){
+                    String welcomeFile = ConfigUtils.getWelcomeFile();
+                    if(welcomeFile!=null){
+                        request.getRequestDispatcher(welcomeFile).forward(request,response);
+                        return;
+                    }
+                }
                 log.info("no result view to be returned "+parameter.getRequestURL());
               //  super.service(request, response);
             }

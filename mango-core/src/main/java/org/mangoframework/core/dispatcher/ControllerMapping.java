@@ -56,6 +56,12 @@ public class ControllerMapping {
         if(controllerMap == null){
             for(String key:mapping.keySet()){
                 if(key.contains("{") && key.contains("}")){
+                    //先看是否有对方方法
+                    controllerMap = mapping.get(key);
+                    Controller controller = controllerMap.get(method);
+                    if(controller==null) {
+                        continue;
+                    }
                     String[] keys = key.split("/");
                     String[] paths = path.split("/");
                     if(keys.length != paths.length){
@@ -75,11 +81,7 @@ public class ControllerMapping {
                         }
                     }
                     if(isMatching){
-                        controllerMap = mapping.get(key);
-                        Controller controller = controllerMap.get(method);
-                        if(controller!=null) {
-                            controller.setPathMap(pathValueMap);
-                        }
+                        controller.setPathMap(pathValueMap);
                         return controller;
                     }
                 }
