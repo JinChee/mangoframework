@@ -2,12 +2,15 @@ package org.mangoframework.core.dispatcher;
 
 import org.mangoframework.core.annotation.RequestParam;
 import org.mangoframework.core.exception.MangoException;
+import org.mangoframework.core.exception.UnauthorizedException;
+import org.mangoframework.core.utils.ConfigUtils;
 import org.mangoframework.core.utils.ResultviewUtils;
 import org.mangoframework.core.view.HeadView;
 import org.mangoframework.core.view.ResultView;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.Map;
 
 
 /**
@@ -16,8 +19,11 @@ import java.lang.reflect.Method;
  */
 public class SimpleHandlerAdapter implements HandlerAdapter {
 
+    //
+    private Map<MangoFilter, String> filterMap;
 
     public SimpleHandlerAdapter() {
+        filterMap = ConfigUtils.getFilters();
     }
 
 
@@ -33,7 +39,6 @@ public class SimpleHandlerAdapter implements HandlerAdapter {
             return null;
         }
         RequestMapping rm = controller.getRequestMapping();
-
         Object instance = null;
         if(rm.isSingleton()){
             instance = controller.getInstance();
@@ -45,6 +50,8 @@ public class SimpleHandlerAdapter implements HandlerAdapter {
             }
         }
         Method requestMethod = controller.getMethod();
+        doFilter(parameter,requestMethod);
+
         Class<?>[] argTypes = requestMethod.getParameterTypes();
         Annotation[][] paramAnns = requestMethod.getParameterAnnotations();
         Object data = null;
@@ -84,4 +91,11 @@ public class SimpleHandlerAdapter implements HandlerAdapter {
     }
 
 
+    private void doFilter(Parameter parameter,Method method) throws Exception {
+        for (MangoFilter mf : filterMap.keySet()) {
+            if (!mf.doFilter(parameter,method)) {
+                throw new UnauthorizedException();
+            }
+        }
+    }
 }

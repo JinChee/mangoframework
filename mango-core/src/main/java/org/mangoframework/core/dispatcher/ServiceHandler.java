@@ -34,12 +34,9 @@ public class ServiceHandler {
     private HandlerAdapter ha;
 
     private static ServiceHandler instance;
-    //
-    private Map<MangoFilter, String> filterMap;
 
     private ServiceHandler() {
         ha = initializeHandlerAdapter();
-        filterMap = ConfigUtils.getFilters();
     }
 
     /**
@@ -168,11 +165,6 @@ public class ServiceHandler {
      * @return object
      */
     public ResultView handleRequest(Parameter parameter) throws Exception {
-        for (MangoFilter mf : filterMap.keySet()) {
-            if (!mf.doFilter(parameter)) {
-                throw new UnauthorizedException();
-            }
-        }
         return ha.handle(parameter);
     }
 
