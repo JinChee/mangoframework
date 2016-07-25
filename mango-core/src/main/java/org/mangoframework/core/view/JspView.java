@@ -54,6 +54,8 @@ public class JspView extends ResultView {
         response.setStatus(503);
         parameter.getRequest().setAttribute("exception",throwable);
         throwable.printStackTrace();
-        parameter.getRequest().getRequestDispatcher(ConfigUtils.getErrorPage()).forward(parameter.getRequest(),response);
+        if(ConfigUtils.getErrorPage()!=null) {
+            parameter.getRequest().getRequestDispatcher(ConfigUtils.getErrorPage()).forward(parameter.getRequest(), response);
+        }
     }
 }

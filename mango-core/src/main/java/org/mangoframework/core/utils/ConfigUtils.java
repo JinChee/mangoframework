@@ -117,7 +117,7 @@ public class ConfigUtils {
     }
 
     public static String getErrorPage(){
-        return properties.getProperty("mango.errorpage","/WEB-INF/error.jsp");
+        return properties.getProperty("mango.errorpage");
     }
 
     public static Map<MangoFilter,String> getFilters(){
