@@ -126,7 +126,8 @@ public class ControllerMapping {
             if(pathValue.length()>0 && pathValue.charAt(pathValue.length()-1)=='/'){
                 pathValue = pathValue.substring(0,pathValue.length()-1);
             }
-            Object controller = Class.forName(controllerClass).newInstance();
+            Class<?> clazz=Class.forName(controllerClass);
+            Object controller = clazz.newInstance();
             RequestMapping rm = controller.getClass().getAnnotation(RequestMapping.class);
             if(rm!=null){
                 String value = rm.value()[0];
