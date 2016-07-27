@@ -66,8 +66,7 @@ public class MangoDispatcher extends HttpServlet {
                         return;
                     }
                 }
-                log.info("no result view to be returned "+parameter.getRequestURL());
-              //  super.service(request, response);
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             }
         }catch (Exception e) {
             try {
