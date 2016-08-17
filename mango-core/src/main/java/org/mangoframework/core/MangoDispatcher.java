@@ -51,8 +51,8 @@ public class MangoDispatcher extends HttpServlet {
             parameter = sh.initializeParameter(request, response);
             if (parameter.getMethod().equals("OPTIONS")) {
                 response.setHeader("Access-Control-Allow-Origin", "*");
-                response.setHeader("Access-Control-Request-Method", "GET,POST,DELETE,PUT,OPTIONS");
-                response.setHeader("Access-Control-Request-Method", "X-PINGOTHER");
+                response.setHeader("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS");
+                response.setHeader("Access-Control-Allow-Headers", "X-PINGOTHER");
                 return;
             }
             ResultView view = sh.handleRequest(parameter);
