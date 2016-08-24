@@ -86,6 +86,10 @@ public class ServiceHandler {
         parameter.setRequestURL(requestUrl);
         int index = requestUrl.indexOf(contextPath);
         String path = requestUrl.substring(index + contextPath.length());
+        String servletPath = request.getServletPath();
+        if(!servletPath.equals(path)) {
+            path = path.substring(servletPath.length());
+        }
         path = URLDecoder.decode(new String(path.getBytes("ISO-8859-1"), DEFAULT_CHARSET), DEFAULT_CHARSET);
         if (path.contains(".")) {
             int temp = path.lastIndexOf(".");
