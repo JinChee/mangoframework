@@ -2,6 +2,8 @@
 简单的javaweb框架。
 
 
+# 项目迁移至：http://git.oschina.net/zhoujingjie/mangoframework
+
 ## 使用说明
 需要classpath下创建mongo.properties
 
